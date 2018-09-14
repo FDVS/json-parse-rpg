@@ -9,15 +9,19 @@ const C_VALUE_SEP = '*: value separator'
 const C_COMMA = '*, comma'
 const C_OTHER = '*other'
 
+//Grab DOM elements
 const app = document.getElementById('app')
 const extra = document.getElementById('extra')
 
+//Transform it to a string since that's how it will be seen in the RPG ILE API
 const dadosStr = JSON.stringify(dados)
 
+//Removes " from a string
 const stripValue = str => {
   return str.split('"').join('')
 }
 
+//Determines the Type to be used in decisions
 const getType = char => {
   const map = {
     '{': C_OBJECT,
@@ -27,7 +31,7 @@ const getType = char => {
     ':': C_VALUE_SEP,
     ',': C_COMMA
   }
-
+  //If none of the required then set default as C_OTHER
   return map[char] !== undefined ? map[char] : C_OTHER
 }
 
@@ -42,6 +46,7 @@ let result = [],
   curChar = '',
   curType = ''
 
+//Update the structure array so we know how to determine the breaks
 const updStructs = type => {
   let l = structs.length
   let struct = { t: type, x: l, i: 0 }
@@ -49,8 +54,6 @@ const updStructs = type => {
   if ([C_OBJECT, C_ARRAY].indexOf(type) !== -1) structs.push(struct)
   else if ([C_CLOSE_OBJ, C_CLOSE_ARR].indexOf(type) !== -1) structs.pop()
   l = structs.length
-  // console.log('type', type, l)
-  if (l === 0) return { t: type, x: 0, i: 0 }
   return structs[l - 1]
 }
 
@@ -59,11 +62,7 @@ while (i <= dadosStr.length) {
   curChar = dadosStr.charAt(i)
   curType = getType(curChar)
   curStruct = updStructs(curType)
-  // if (curStruct === undefined) {
-  //   console.log('jumped', JSON.stringify(structs[0]))
-  //   i++
-  //   continue
-  // }
+
   //COMMA indicates new element at same level, aplicable to OBJ and ARR
   //Closing OBJ or ARR also has to remove the last key
   if ([C_COMMA, C_CLOSE_OBJ, C_CLOSE_ARR].indexOf(curType) !== -1) {
@@ -110,13 +109,14 @@ while (i <= dadosStr.length) {
       result.push({ k: k, v: v, kl: k.length, vl: v.length })
       i = end
     }
-    // console.log('ARR_KEY', curStruct.x, curChar, structI)
   }
-  // console.log('END_LOOP', curStruct, curChar, k)
+  //Keep moving along the string
   i++
+  //Lock this because Chrome thinks i'll go infinite loop
   if (i >= 9500) break
 }
 
+//Determining the max value length (d.vl) or key length (d.kl)
 let test = result.map(d => d.vl).reduce((a, b) => {
   return Math.max(a, b)
 })
