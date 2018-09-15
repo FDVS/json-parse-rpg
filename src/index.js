@@ -147,9 +147,9 @@ console.log(
 
 //Grab DOM elements
 const app = document.getElementById('app')
-// const extra = document.getElementById('extra')
+const extra = document.getElementById('extra')
 
 //Put stuff on the screen
 app.innerHTML = JSON.stringify(result, 0, 2)
-// extra.innerHTML = JSON.stringify(dados, 0, 2)
+extra.innerHTML = JSON.stringify(dados, 0, 2)
 // extra.innerHTML = JSON.stringify(test, 0, 2)
