@@ -1,5 +1,7 @@
 import dados from '/dados.json'
 
+const start = Date.now()
+
 //Transform it to a string since that's how it will be seen in the RPG ILE API
 const dadosStr = JSON.stringify(dados)
 
@@ -19,6 +21,7 @@ let result = [],
   end,
   structs = [],
   structI = 0,
+  maxStructs = 0,
   curStruct = '',
   curChar = '',
   curType = ''
@@ -51,6 +54,7 @@ const updStructs = type => {
   if ([C_OBJECT, C_ARRAY].indexOf(type) !== -1) structs.push(struct)
   else if ([C_CLOSE_OBJ, C_CLOSE_ARR].indexOf(type) !== -1) structs.pop()
   l = structs.length
+  maxStructs = Math.max(maxStructs, l)
   return structs[l - 1]
 }
 
@@ -132,7 +136,14 @@ while (i < dadosStr.length) {
 const kMax = result.map(d => d.kl).reduce((a, b) => Math.max(a, b))
 const vMax = result.map(d => d.vl).reduce((a, b) => Math.max(a, b))
 
-console.log(i, kMax, vMax)
+console.log(
+  'i = A' + i + ';',
+  'max Key = A' + kMax + ';',
+  'max Value = A' + vMax + ';',
+  'max Structs = DIM(' + maxStructs + '); ',
+  'result length = DIM(' + result.length + '); ',
+  'elapsed time = ' + (Date.now() - start) + 'ms;'
+)
 
 //Grab DOM elements
 const app = document.getElementById('app')
