@@ -68,30 +68,28 @@ while (i <= dadosStr.length) {
   if ([C_COMMA, C_CLOSE_OBJ, C_CLOSE_ARR].indexOf(curType) !== -1) {
     //Removes the last key added to K
     k = k.substr(0, k.lastIndexOf('.'))
-  }
-
-  //If we're extracting KEYS from an OBJECT
-  if (
-    curType === C_OBJECT ||
-    (curType === C_COMMA && curStruct.t === C_OBJECT)
-  ) {
-    str = i + 1
-    end = dadosStr.indexOf(':', str)
-    if (k) k += '.'
-    k += stripValue(dadosStr.substr(str, end - str))
-    // console.log('FOUND OBJ', i, k, end, curType, curStruct)
-    i = end
+  } else if (curStruct.t === C_OBJECT) {
     //If we're extracting KEYS from an OBJECT
-  } else if (curType === C_OTHER && curStruct.t === C_OBJECT) {
-    str = i
-    let strend = dadosStr.indexOf('"', str + 1)
-    let comma = dadosStr.indexOf(',', str)
-    let close = dadosStr.indexOf('}', str)
-    end = curChar === '"' ? strend : Math.min(comma, close)
-    let v = stripValue(dadosStr.substr(str, end - str))
-    result.push({ k: k, v: v, kl: k.length, vl: v.length })
-    i = end
+    if ([C_OBJECT, C_COMMA].indexOf(curType) !== -1) {
+      str = i + 1
+      end = dadosStr.indexOf(':', str)
+      if (k) k += '.'
+      k += stripValue(dadosStr.substr(str, end - str))
+      // console.log('FOUND OBJ', i, k, end, curType, curStruct)
+      i = end
+      //If we're extracting VALUES from an OBJECT
+    } else if (curType === C_OTHER) {
+      str = i
+      let strend = dadosStr.indexOf('"', str + 1)
+      let comma = dadosStr.indexOf(',', str)
+      let close = dadosStr.indexOf('}', str)
+      end = curChar === '"' ? strend : Math.min(comma, close)
+      let v = stripValue(dadosStr.substr(str, end - str))
+      result.push({ k: k, v: v, kl: k.length, vl: v.length })
+      i = end
+    }
   } else if (curStruct.t === C_ARRAY) {
+    //Defining KEY for array, based on index
     if ([C_ARRAY, C_COMMA].indexOf(curType) !== -1) {
       if (curType === C_ARRAY) structs[curStruct.x].i = 0
       if (curType === C_COMMA) structs[curStruct.x].i++
@@ -113,7 +111,7 @@ while (i <= dadosStr.length) {
   //Keep moving along the string
   i++
   //Lock this because Chrome thinks i'll go infinite loop
-  if (i >= 9500) break
+  if (i >= 1500) break
 }
 
 //Determining the max value length (d.vl) or key length (d.kl)
@@ -122,5 +120,5 @@ let test = result.map(d => d.vl).reduce((a, b) => {
 })
 
 app.innerHTML = JSON.stringify(result, 0, 2)
-// extra.innerHTML = JSON.stringify(dados, 0, 2)
-extra.innerHTML = JSON.stringify(test, 0, 2)
+extra.innerHTML = JSON.stringify(dados, 0, 2)
+// extra.innerHTML = JSON.stringify(test, 0, 2)
