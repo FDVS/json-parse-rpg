@@ -135,10 +135,10 @@ const vMax = result.map(d => d.vl).reduce((a, b) => Math.max(a, b))
 console.log(i, kMax, vMax)
 
 //Grab DOM elements
-// const app = document.getElementById('app')
+const app = document.getElementById('app')
 // const extra = document.getElementById('extra')
 
 //Put stuff on the screen
-// app.innerHTML = JSON.stringify(result, 0, 2)
+app.innerHTML = JSON.stringify(result, 0, 2)
 // extra.innerHTML = JSON.stringify(dados, 0, 2)
 // extra.innerHTML = JSON.stringify(test, 0, 2)
