@@ -56,16 +56,22 @@ const updStructs = type => {
 
 //Go through the string.
 //Although it looks like we'll go char by char, that isn't the case
-while (i <= dadosStr.length) {
+while (i < dadosStr.length) {
   curChar = dadosStr.charAt(i) //Current Character
   curType = getType(curChar) //Current Type
   curStruct = updStructs(curType) //Current Structure
 
+  //Last iteration we are no longer in a JSON structure so we can leave
+  if (curStruct === undefined) break
+
+  if (structs.length === 0)
+    console.log(curChar, curType, curStruct, i, dadosStr.length)
   //Just in case there are spaces outside of the variables
   if (curChar === ' ') {
     i++
     continue
   }
+
   // console.log(curChar, k)
   //COMMA indicates new element at same level, aplicable to OBJ and ARR
   //Closing OBJ or ARR also has to remove the last key
@@ -126,7 +132,7 @@ while (i <= dadosStr.length) {
 const kMax = result.map(d => d.kl).reduce((a, b) => Math.max(a, b))
 const vMax = result.map(d => d.vl).reduce((a, b) => Math.max(a, b))
 
-console.log(kMax, vMax)
+console.log(i, kMax, vMax)
 
 //Grab DOM elements
 // const app = document.getElementById('app')
